@@ -1,4 +1,27 @@
+#!/usr/bin/env python3
+"""
+Radar Fiscal — script de atualização automática.
 
+O que este script faz:
+  1. Lê site/data.json (estado atual do painel).
+  2. Chama a API da Anthropic (modelo Claude) com a ferramenta de busca na
+     web habilitada, pedindo para verificar os portais oficiais listados
+     abaixo e trazer só atualizações REAIS, com fonte e data.
+  3. Valida o formato da resposta. Se vier fora do formato esperado, o
+     script ABORTA sem sobrescrever nada (fail-safe: prefere não atualizar
+     a colocar lixo/alucinação no ar).
+  4. Recalcula o Boletim do Dia a partir dos itens mais recentes.
+  5. Grava site/data.json de volta.
+
+O que este script NÃO faz (por limitação técnica e/ou de segurança):
+  - Não varre o LinkedIn (colegasHoje / meusPostsLinkedIn continuam como
+    estavam). Automatizar login/scraping do LinkedIn violaria os Termos de
+    Uso da plataforma e arrisca a conta do usuário — por isso isso
+    continua sendo feito manualmente, sob pedido, dentro da conversa com o
+    Claude.
+  - Não decide sozinho mudanças de estrutura do site (novas abas, etc.) —
+    só atualiza o conteúdo dos itens já mapeados.
+"""
 
 import json
 import os
@@ -175,7 +198,7 @@ except json.JSONDecodeError as e:
     if novos:
         dados["itens"].extend(novos)
         print(f"{len(novos)} item(ns) novo(s) adicionado(s).")
-    else:
+else:
         print("Nenhuma novidade real encontrada nesta varredura.")
 
     for estado, texto in resultado.get("estadosInfo_atualizacoes", {}).items():
@@ -194,27 +217,4 @@ except json.JSONDecodeError as e:
 
 
 if __name__ == "__main__":
-    main()n3
-"""
-Radar Fiscal — script de atualização automática.
-
-O que este script faz:
-  1. Lê site/data.json (estado atual do painel).
-  2. Chama a API da Anthropic (modelo Claude) com a ferramenta de busca na
-     web habilitada, pedindo para verificar os portais oficiais listados
-     abaixo e trazer só atualizações REAIS, com fonte e data.
-  3. Valida o formato da resposta. Se vier fora do formato esperado, o
-     script ABORTA sem sobrescrever nada (fail-safe: prefere não atualizar
-     a colocar lixo/alucinação no ar).
-  4. Recalcula o Boletim do Dia a partir dos itens mais recentes.
-  5. Grava site/data.json de volta.
-
-O que este script NÃO faz (por limitação técnica e/ou de segurança):
-  - Não varre o LinkedIn (colegasHoje / meusPostsLinkedIn continuam como
-    estavam). Automatizar login/scraping do LinkedIn violaria os Termos de
-    Uso da plataforma e arrisca a conta do usuário — por isso isso
-    continua sendo feito manualmente, sob pedido, dentro da conversa com o
-    Claude.
-  - Não decide sozinho mudanças de estrutura do site (novas abas, etc.) —
-    só atualiza o conteúdo dos itens já mapeados.
-"""
+    main()
