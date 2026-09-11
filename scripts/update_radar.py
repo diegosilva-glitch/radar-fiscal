@@ -184,7 +184,7 @@ def main():
 
     try:
         resultado = json.loads(texto_limpo)
-except json.JSONDecodeError as e:
+    except json.JSONDecodeError as e:
         print(f"ERRO: resposta do modelo não é JSON válido, abortando sem alterar nada. Detalhe: {e}", file=sys.stderr)
         print("Resposta recebida:", texto_final[:2000], file=sys.stderr)
         sys.exit(1)
@@ -198,7 +198,7 @@ except json.JSONDecodeError as e:
     if novos:
         dados["itens"].extend(novos)
         print(f"{len(novos)} item(ns) novo(s) adicionado(s).")
-else:
+    else:
         print("Nenhuma novidade real encontrada nesta varredura.")
 
     for estado, texto in resultado.get("estadosInfo_atualizacoes", {}).items():
